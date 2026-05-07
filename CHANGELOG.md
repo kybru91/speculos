@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.26.7] 2026-05-06
+
+### Changed
+
+- Introduce NBGL text line SEPH messages, to fix OCR issues with API_LEVEL_26
+
 ## [0.26.6] 2026-04-23
 
 ### Changed

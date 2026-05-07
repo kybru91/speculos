@@ -43,6 +43,7 @@ class SephTag(IntEnum):
 
     DBG_SCREEN_DISPLAY_STATUS = 0x5e
     PRINTC_STATUS = 0x5f
+    NBGL_SEND_SPECULOS_TEXT_LINE = 0x5A
 
     GENERAL_STATUS = 0x60
     GENERAL_STATUS_LAST_COMMAND = 0x0000
@@ -273,7 +274,8 @@ class SeProxyHal(IODevice):
         self.events: List[TextEvent] = []
         self.need_nbgl_refresh = False
         self.is_last_draw_nbgl = False
-        self.is_nbgl_serialized_enabled = False
+        self.nbgl_speculos_text_lines_enabled = False
+        self.current_nbgl_text_line = ""
         self.verbose = verbose
         self.sound = sound
 
@@ -388,6 +390,10 @@ class SeProxyHal(IODevice):
             if screen.display.rendering == RENDER_METHOD.PROGRESSIVE:
                 screen.display.screen_update()
 
+        elif tag == SephTag.NBGL_SEND_SPECULOS_TEXT_LINE:
+            self.nbgl_speculos_text_lines_enabled = True
+            self.ocr.add_text(data.decode())
+
         elif tag == SephTag.PRINTF_STATUS or tag == SephTag.PRINTC_STATUS:
             for b in [chr(b) for b in data]:
                 if b == '\n':
@@ -469,22 +475,14 @@ class SeProxyHal(IODevice):
                     self.logger.warning(f"Unknown tune id: {tune_id}")
 
         elif tag == SephTag.NBGL_SERIALIZED_EVENT:
-            self.is_nbgl_serialized_enabled = True
             # Deserialize NBGL event bytes
+            #
+            # NBGL serialized events are not enabled in the targets libshared.
+            # However, speculos has the capability to parse them, and could exploit them
+            # in the future.
             is_stax = (self.model == 'stax')
             event = deserialize_nbgl_bytes(is_stax, data)
-
-            # Extract text from NBGL event
-            d = event.to_json_dict()
-            if 'obj' in d:
-                content = d['obj']['content']
-                text = content.get('text', '')
-                if len(text) > 0:
-                    # Text may be split in lines
-                    lines = text.split('\n')
-                    # Add line to be sent as TextEvent to Ragger
-                    for line in lines:
-                        self.ocr.add_text(line)
+            self.logger.info(event)
 
         elif tag == SephTag.NBGL_DRAW_RECT:
             assert isinstance(screen.display.nbgl_gl, NBGL)
@@ -509,16 +507,16 @@ class SeProxyHal(IODevice):
         elif tag == SephTag.NBGL_DRAW_IMAGE:
             assert isinstance(screen.display.nbgl_gl, NBGL)
             # Do not analyze raw image,
-            # if the text was already sent through NBGL serialized events
-            if self.is_nbgl_serialized_enabled is False:
+            # if the text was already sent through a NBGL text line event.
+            if self.nbgl_speculos_text_lines_enabled is False:
                 self.ocr.analyze_bitmap(data, False)
             screen.display.nbgl_gl.hal_draw_image(data)
 
         elif tag == SephTag.NBGL_DRAW_IMAGE_RLE:
             assert isinstance(screen.display.nbgl_gl, NBGL)
             # Do not analyze raw image,
-            # if the text was already sent through NBGL serialized events
-            if self.is_nbgl_serialized_enabled is False:
+            # if the text was already sent through a NBGL text line event.
+            if self.nbgl_speculos_text_lines_enabled is False:
                 self.ocr.analyze_bitmap(data, False)
             screen.display.nbgl_gl.hal_draw_image_rle(data)
 
