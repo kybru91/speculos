@@ -3,6 +3,7 @@ import logging
 import sys
 import threading
 import time
+import struct
 from pathlib import Path
 from collections import namedtuple
 from enum import IntEnum
@@ -392,7 +393,12 @@ class SeProxyHal(IODevice):
 
         elif tag == SephTag.NBGL_SEND_SPECULOS_TEXT_LINE:
             self.nbgl_speculos_text_lines_enabled = True
-            self.ocr.add_text(data.decode())
+            # Extract text content
+            text = data[:-8].decode()
+            # Extract coordinates
+            coordinates = data[-8:]
+            x, y, w, h = struct.unpack('>4H', coordinates)
+            self.ocr.add_text(text, x, y, w, h)
 
         elif tag == SephTag.PRINTF_STATUS or tag == SephTag.PRINTC_STATUS:
             for b in [chr(b) for b in data]:
