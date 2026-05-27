@@ -305,6 +305,17 @@ bolos_err_t sys_ENDORSEMENT_KEY1_SIGN_DATA(uint8_t *data, size_t data_length,
   return ret;
 }
 
+bolos_err_t sys_ENDORSEMENT_KEY1_SIGN_WITHOUT_CODE_HASH(
+    uint8_t *data, size_t data_length, uint8_t *out_signature,
+    size_t *out_signature_length)
+{
+  uint32_t tmp_len = *out_signature_length;
+  bolos_err_t ret = sys_ENDORSEMENT_key1_sign_without_code_hash(
+      data, data_length, out_signature, &tmp_len);
+  *out_signature_length = tmp_len;
+  return ret;
+}
+
 bolos_err_t sys_ENDORSEMENT_GET_CODE_HASH(uint8_t *out_hash, size_t hash_length)
 {
   if (!out_hash || (hash_length < ENDORSEMENT_HASH_LENGTH)) {

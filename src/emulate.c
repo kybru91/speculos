@@ -875,6 +875,12 @@ emulate_syscall_endorsement_pre_api_level_26(unsigned long syscall,
                   uint8_t *, out_signature,
                   uint32_t *, out_signature_length);
 
+        SYSCALL4(ENDORSEMENT_key1_sign_without_code_hash, "(%p, %u, %p, %p)",
+                  uint8_t *, data,
+                  uint32_t, data_length,
+                  uint8_t *, out_signature,
+                  uint32_t *, out_signature_length);
+
         SYSCALL1(ENDORSEMENT_get_code_hash, "(%p)",
                   uint8_t *, out_hash);
 
@@ -904,6 +910,12 @@ emulate_syscall_endorsement_post_api_level_25(unsigned long syscall,
                   size_t *, out_public_key_length)
 
         SYSCALL4(ENDORSEMENT_KEY1_SIGN_DATA, "(%p, %u, %p, %p)",
+                  uint8_t *, data,
+                  size_t, data_length,
+                  uint8_t *, out_signature,
+                  size_t *, out_signature_length)
+
+        SYSCALL4(ENDORSEMENT_KEY1_SIGN_WITHOUT_CODE_HASH, "(%p, %u, %p, %p)",
                   uint8_t *, data,
                   size_t, data_length,
                   uint8_t *, out_signature,

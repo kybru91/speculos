@@ -94,6 +94,10 @@ bolos_err_t sys_ENDORSEMENT_KEY1_SIGN_DATA(uint8_t *data, size_t data_length,
                                            uint8_t *out_signature,
                                            size_t *out_signature_length);
 
+bolos_err_t sys_ENDORSEMENT_KEY1_SIGN_WITHOUT_CODE_HASH(
+    uint8_t *data, size_t data_length, uint8_t *out_signature,
+    size_t *out_signature_length);
+
 bolos_err_t sys_ENDORSEMENT_GET_CODE_HASH(uint8_t *out_hash,
                                           size_t hash_length);
 
