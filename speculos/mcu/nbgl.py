@@ -282,11 +282,28 @@ class NBGL(GraphicLibrary):
         if compression:
             buffer_size = data[5] | (data[6] << 8) | (data[7] << 16)
         else:
-            buffer_size = int((area.width * area.height * bpp) / 8)
-        buffer = data[8: 8 + buffer_size]
+            # Raw bitmap size in bytes: (width * height * bpp) bits rounded up to
+            # a whole byte. Floor division would under-count non-byte-aligned
+            # bitmaps (e.g. 14x14 1bpp = 196 bits -> 25 bytes, not 24), leaving
+            # hal_draw_image to read its trailing bytes out of range.
+            buffer_size = (area.width * area.height * bpp + 7) // 8
+        buffer = data[8 : 8 + buffer_size]
 
         if not compression:
-            data = nbgl_area_t.build(area) + data[8: 8 + buffer_size + 1]
+            # hal_draw_image() expects its payload laid out as:
+            #   area + bitmap + transformation (1 byte) + color_map (1 byte)
+            # The image-file syscall carries no transformation byte, so we insert
+            # 0 (NO_TRANSFORMATION); data[-1] is the color_map appended by the
+            # syscall. The old code forwarded "bitmap + 1 byte" only, which made
+            # hal_draw_image consume the color_map as the transformation and then
+            # read the color_map out of range. This mirrors the compressed branch
+            # below, which already inserts the b'\0' transformation byte.
+            data = (
+                nbgl_area_t.build(area)
+                + data[8 : 8 + buffer_size]
+                + b"\0"
+                + data[-1].to_bytes(1, "big")
+            )
             return self.hal_draw_image(data)
         output_buffer = []
         while len(buffer) > 0:

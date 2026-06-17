@@ -127,7 +127,13 @@ unsigned long sys_nbgl_front_draw_img_file(nbgl_area_t *area, uint8_t *buffer,
 
   switch (compressed) {
   case 0: // no compression
-    buffer_len = (area->width * area->height * (area->bpp + 1)) / 8;
+    // Send the whole image file to the MCU: 8-byte header + raw bitmap.
+    // The bitmap is (width * height * bpp) bits, rounded up to a whole number
+    // of bytes. The previous formula used floor division and omitted the
+    // 8-byte header, which truncated the data for non-byte-aligned bitmaps
+    // (e.g. a 14x14 1bpp icon = 196 bits = 25 bytes, not 24) and made the MCU
+    // read past the buffer. The "+ 8" mirrors the gzip branch below.
+    buffer_len = 8 + (area->width * area->height * (area->bpp + 1) + 7) / 8;
     break;
   case 1: // gzlib compression
     buffer_len = (buffer[5] | (buffer[5 + 1] << 8) | (buffer[5 + 2] << 16)) + 8;
