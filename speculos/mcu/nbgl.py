@@ -99,7 +99,7 @@ class NBGL(GraphicLibrary):
         return self.fb.update(area.x0, area.y0, area.width, area.height)
 
     def hal_draw_horizontal_line(self, data: bytes) -> None:
-        area = nbgl_area_t.parse(data[0 : nbgl_area_t.sizeof()])
+        area = nbgl_area_t.parse(data[0: nbgl_area_t.sizeof()])
         self.__assert_area(area)
 
         mask = data[-2]
@@ -115,7 +115,7 @@ class NBGL(GraphicLibrary):
                 self.fb.draw_horizontal_line(area.x0, y, area.width, back_color)
 
     def hal_draw_line(self, data: bytes) -> None:
-        area = nbgl_area_t.parse(data[0 : nbgl_area_t.sizeof()])
+        area = nbgl_area_t.parse(data[0: nbgl_area_t.sizeof()])
         self.__assert_area(area)
 
         dotStartIndex = data[-2]
@@ -281,12 +281,12 @@ class NBGL(GraphicLibrary):
                     pass
 
     def hal_draw_image(self, data: bytes):
-        area = nbgl_area_t.parse(data[0 : nbgl_area_t.sizeof()])
+        area = nbgl_area_t.parse(data[0: nbgl_area_t.sizeof()])
         self.__assert_area(area)
         bpp = NBGL.nbgl_bpp_to_read_bpp(area.bpp)
         bit_size = area.width * area.height * bpp
         buffer_size = (bit_size // 8) + ((bit_size % 8) > 0)
-        buffer = data[nbgl_area_t.sizeof() : nbgl_area_t.sizeof() + buffer_size]
+        buffer = data[nbgl_area_t.sizeof(): nbgl_area_t.sizeof() + buffer_size]
         transformation: int = data[nbgl_area_t.sizeof() + buffer_size]
         color_map = data[
             nbgl_area_t.sizeof() + buffer_size + 1
@@ -294,9 +294,9 @@ class NBGL(GraphicLibrary):
         self.draw_image(area, bpp, transformation, buffer, color_map)
 
     def hal_draw_image_file(self, data):
-        area = nbgl_area_t.parse(data[0 : nbgl_area_t.sizeof()])
+        area = nbgl_area_t.parse(data[0: nbgl_area_t.sizeof()])
         self.__assert_area(area)
-        data = data[nbgl_area_t.sizeof() :]
+        data = data[nbgl_area_t.sizeof():]
         area.width = (data[1] << 8) | data[0]
         area.height = (data[3] << 8) | data[2]
         area.bpp = data[4] >> 4
@@ -310,7 +310,7 @@ class NBGL(GraphicLibrary):
             # bitmaps (e.g. 14x14 1bpp = 196 bits -> 25 bytes, not 24), leaving
             # hal_draw_image to read its trailing bytes out of range.
             buffer_size = (area.width * area.height * bpp + 7) // 8
-        buffer = data[8 : 8 + buffer_size]
+        buffer = data[8: 8 + buffer_size]
 
         if not compression:
             # hal_draw_image() expects its payload laid out as:
@@ -323,7 +323,7 @@ class NBGL(GraphicLibrary):
             # below, which already inserts the b'\0' transformation byte.
             data = (
                 nbgl_area_t.build(area)
-                + data[8 : 8 + buffer_size]
+                + data[8: 8 + buffer_size]
                 + b"\0"
                 + data[-1].to_bytes(1, "big")
             )
@@ -356,9 +356,9 @@ class NBGL(GraphicLibrary):
         - nb_skipped_bytes (1 byte)
         - character (4 bytes) [added by speculos syscall]
         """
-        area = nbgl_area_t.parse(data[0 : nbgl_area_t.sizeof()])
+        area = nbgl_area_t.parse(data[0: nbgl_area_t.sizeof()])
         self.__assert_area(area)
-        bitmap = data[nbgl_area_t.sizeof() : -(1 + 1 + 4)]
+        bitmap = data[nbgl_area_t.sizeof(): -(1 + 1 + 4)]
         bpp = NBGL.nbgl_bpp_to_read_bpp(area.bpp)
         # We may have to skip initial transparent pixels (bytes, in that case)
         nb_skipped_bytes = data[nbgl_area_t.sizeof() + len(bitmap) + 1]
