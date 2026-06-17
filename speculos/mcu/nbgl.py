@@ -1,16 +1,19 @@
 import gzip
 import logging
 import sys
-from construct import Struct, Int8ul, Int16ul, Int16sl
-from enum import IntEnum
-from speculos.observer import TextEvent
 import time
+from enum import IntEnum
+
+from construct import Int8ul, Int16sl, Int16ul, Struct
+
+from speculos.observer import TextEvent
 
 try:
     from functools import cache
 except ImportError:
     # `functools.cache` does not exists on Python3.8
     from functools import lru_cache
+
     cache = lru_cache(maxsize=None)
 from typing import List, Tuple
 
@@ -37,38 +40,50 @@ nbgl_area_t = Struct(
 
 
 class NBGL(GraphicLibrary):
-
     @staticmethod
     @cache
     def to_screen_color(color: int, bpp: int) -> int:
+        # fmt: off
         color_table = {
             1: 0xFFFFFF,
             2: 0x555555,
             4: 0x111111
         }
-        assert bpp in color_table, f"BPP should be in {color_table.keys()}, but is '{bpp}'"
+        # fmt: on
+        assert (
+            bpp in color_table
+        ), f"BPP should be in {color_table.keys()}, but is '{bpp}'"
         return color * color_table[bpp]
 
-    def __init__(self,
-                 fb: FrameBuffer,
-                 size: Tuple[int, int],
-                 model: str):
+    def __init__(self, fb: FrameBuffer, size: Tuple[int, int], model: str):
         super().__init__(fb, size, model)
         self.logger = logging.getLogger("NBGL")
 
     def __assert_area(self, area) -> None:
-        if area.x0 > self.SCREEN_WIDTH or (area.x0+area.width) > self.SCREEN_WIDTH:
-            raise AssertionError("left edge (%d) or right edge (%d) out of screen" % (area.x0, (area.x0 + area.width)))
+        if area.x0 > self.SCREEN_WIDTH or (area.x0 + area.width) > self.SCREEN_WIDTH:
+            raise AssertionError(
+                "left edge (%d) or right edge (%d) out of screen"
+                % (area.x0, (area.x0 + area.width))
+            )
         # on Nano, it's allowed to have y0 < 0 or y0 > HEIGHT (in menu list)
         if self.SCREEN_HEIGHT == 64:
             return
-        if area.y0 > self.SCREEN_HEIGHT or (area.y0+area.height) > self.SCREEN_HEIGHT:
-            raise AssertionError("top edge (%d) or bottom edge (%d) out of screen" % (area.y0, (area.y0 + area.height)))
+        if area.y0 > self.SCREEN_HEIGHT or (area.y0 + area.height) > self.SCREEN_HEIGHT:
+            raise AssertionError(
+                "top edge (%d) or bottom edge (%d) out of screen"
+                % (area.y0, (area.y0 + area.height))
+            )
 
     def hal_draw_rect(self, data: bytes) -> List[TextEvent]:
         area = nbgl_area_t.parse(data)
         self.__assert_area(area)
-        return self.fb.draw_rect(area.x0, area.y0, area.width, area.height, NBGL.to_screen_color(area.color, 2))
+        return self.fb.draw_rect(
+            area.x0,
+            area.y0,
+            area.width,
+            area.height,
+            NBGL.to_screen_color(area.color, 2),
+        )
 
     def refresh(self, data: bytes) -> bool:
         if self.model == "apex_p":
@@ -84,7 +99,7 @@ class NBGL(GraphicLibrary):
         return self.fb.update(area.x0, area.y0, area.width, area.height)
 
     def hal_draw_horizontal_line(self, data: bytes) -> None:
-        area = nbgl_area_t.parse(data[0:nbgl_area_t.sizeof()])
+        area = nbgl_area_t.parse(data[0 : nbgl_area_t.sizeof()])
         self.__assert_area(area)
 
         mask = data[-2]
@@ -93,14 +108,14 @@ class NBGL(GraphicLibrary):
         back_color = NBGL.to_screen_color(area.color, 2)
         front_color = NBGL.to_screen_color(color, 2)
 
-        for y in range(area.y0, area.y0+area.height):
-            if (mask >> (y-area.y0)) & 0x1:
+        for y in range(area.y0, area.y0 + area.height):
+            if (mask >> (y - area.y0)) & 0x1:
                 self.fb.draw_horizontal_line(area.x0, y, area.width, front_color)
             else:
                 self.fb.draw_horizontal_line(area.x0, y, area.width, back_color)
 
     def hal_draw_line(self, data: bytes) -> None:
-        area = nbgl_area_t.parse(data[0:nbgl_area_t.sizeof()])
+        area = nbgl_area_t.parse(data[0 : nbgl_area_t.sizeof()])
         self.__assert_area(area)
 
         dotStartIndex = data[-2]
@@ -114,13 +129,13 @@ class NBGL(GraphicLibrary):
             # APEX and gray color
             # if vertical line
             if area.width == 1:
-                for y in range(area.y0, area.y0+area.height):
+                for y in range(area.y0, area.y0 + area.height):
                     if ((y - area.y0) % 3) == dotStartIndex:
                         self.fb.draw_point(area.x0, y, NBGL.to_screen_color(0, 2))
 
             # if horizontal line
             elif area.height == 1:
-                for x in range(area.x0, area.x0+area.width):
+                for x in range(area.x0, area.x0 + area.width):
                     if ((x - area.x0) % 3) == dotStartIndex:
                         self.fb.draw_point(x, area.y0, NBGL.to_screen_color(0, 2))
 
@@ -128,13 +143,14 @@ class NBGL(GraphicLibrary):
     @cache
     def get_color_from_color_map(color, color_map, bpp):
         # #define GET_COLOR_MAP(__map__,__col__) ((__map__>>(__col__*2))&0x3)
-        return NBGL.to_screen_color((color_map >> (color*2)) & 0x3, bpp)
+        return NBGL.to_screen_color((color_map >> (color * 2)) & 0x3, bpp)
 
     @staticmethod
     @cache
     def get_4bpp_color_from_color_index(index, front_color, back_color):
         COLOR_MAPS_4BPP = {
             # Manually hardcoced color maps
+            # fmt: off
             (NbglColor.BLACK, NbglColor.WHITE): [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
             (NbglColor.WHITE, NbglColor.BLACK): [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
             (NbglColor.DARK_GRAY, NbglColor.WHITE): [5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 11, 12, 13, 14, 15],
@@ -155,9 +171,12 @@ class NBGL(GraphicLibrary):
             (NbglColor.WHITE, NbglColor.DARK_GRAY): [15, 14, 13, 13, 12, 11, 11, 10, 9, 9, 8, 7, 7, 6, 5, 5],
             (NbglColor.WHITE, NbglColor.LIGHT_GRAY): [15, 15, 14, 14, 14, 13, 13, 13, 12, 12, 11, 11, 11, 10, 10, 10],
             (NbglColor.WHITE, NbglColor.WHITE): [15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15],
+            # fmt: on
         }
 
-        mapped_index = COLOR_MAPS_4BPP[(NbglColor(front_color), NbglColor(back_color))][index]
+        mapped_index = COLOR_MAPS_4BPP[(NbglColor(front_color), NbglColor(back_color))][
+            index
+        ]
         return NBGL.to_screen_color(mapped_index, 4)
 
     @staticmethod
@@ -207,18 +226,20 @@ class NBGL(GraphicLibrary):
 
         for byte in buffer:
             for i in range(0, 8, bit_step):
-                nib = (byte >> (8-bit_step-i)) & mask
+                nib = (byte >> (8 - bit_step - i)) & mask
                 if color_map and bpp < 4:
                     pixel_color = NBGL.get_color_from_color_map(nib, color_map, bpp)
                 elif bpp == 4:
-                    pixel_color = NBGL.get_4bpp_color_from_color_index(nib, color_map, area.color)
+                    pixel_color = NBGL.get_4bpp_color_from_color_index(
+                        nib, color_map, area.color
+                    )
                 else:
                     pixel_color = NBGL.to_screen_color(nib, bpp)
 
                 self.fb.draw_point(x, y, pixel_color)
 
                 if transformation == 0:
-                    if y < area.y0 + area.height-1:
+                    if y < area.y0 + area.height - 1:
                         y = y + 1
                     else:
                         y = area.y0
@@ -260,20 +281,22 @@ class NBGL(GraphicLibrary):
                     pass
 
     def hal_draw_image(self, data: bytes):
-        area = nbgl_area_t.parse(data[0:nbgl_area_t.sizeof()])
+        area = nbgl_area_t.parse(data[0 : nbgl_area_t.sizeof()])
         self.__assert_area(area)
         bpp = NBGL.nbgl_bpp_to_read_bpp(area.bpp)
-        bit_size = (area.width * area.height * bpp)
+        bit_size = area.width * area.height * bpp
         buffer_size = (bit_size // 8) + ((bit_size % 8) > 0)
-        buffer = data[nbgl_area_t.sizeof(): nbgl_area_t.sizeof()+buffer_size]
-        transformation: int = data[nbgl_area_t.sizeof()+buffer_size]
-        color_map = data[nbgl_area_t.sizeof()+buffer_size + 1]  # front color in case of BPP4
+        buffer = data[nbgl_area_t.sizeof() : nbgl_area_t.sizeof() + buffer_size]
+        transformation: int = data[nbgl_area_t.sizeof() + buffer_size]
+        color_map = data[
+            nbgl_area_t.sizeof() + buffer_size + 1
+        ]  # front color in case of BPP4
         self.draw_image(area, bpp, transformation, buffer, color_map)
 
     def hal_draw_image_file(self, data):
-        area = nbgl_area_t.parse(data[0:nbgl_area_t.sizeof()])
+        area = nbgl_area_t.parse(data[0 : nbgl_area_t.sizeof()])
         self.__assert_area(area)
-        data = data[nbgl_area_t.sizeof():]
+        data = data[nbgl_area_t.sizeof() :]
         area.width = (data[1] << 8) | data[0]
         area.height = (data[3] << 8) | data[2]
         area.bpp = data[4] >> 4
@@ -312,7 +335,12 @@ class NBGL(GraphicLibrary):
             output_buffer += gzip.decompress(bytes(buffer[:compressed_chunk_len]))
             buffer = buffer[compressed_chunk_len:]
 
-        data = nbgl_area_t.build(area) + bytes(output_buffer) + b'\0' + data[-1].to_bytes(1, 'big')
+        data = (
+            nbgl_area_t.build(area)
+            + bytes(output_buffer)
+            + b"\0"
+            + data[-1].to_bytes(1, "big")
+        )
         self.hal_draw_image(data)
         # decompress
 
@@ -328,9 +356,9 @@ class NBGL(GraphicLibrary):
         - nb_skipped_bytes (1 byte)
         - character (4 bytes) [added by speculos syscall]
         """
-        area = nbgl_area_t.parse(data[0:nbgl_area_t.sizeof()])
+        area = nbgl_area_t.parse(data[0 : nbgl_area_t.sizeof()])
         self.__assert_area(area)
-        bitmap = data[nbgl_area_t.sizeof():-(1+1+4)]
+        bitmap = data[nbgl_area_t.sizeof() : -(1 + 1 + 4)]
         bpp = NBGL.nbgl_bpp_to_read_bpp(area.bpp)
         # We may have to skip initial transparent pixels (bytes, in that case)
         nb_skipped_bytes = data[nbgl_area_t.sizeof() + len(bitmap) + 1]
@@ -342,6 +370,8 @@ class NBGL(GraphicLibrary):
         buffer += RLECustom.decode(1, bitmap, bpp)
 
         # Display the uncompressed image
-        transformation = 0      # NO_TRANSFORMATION
-        color_map = data[nbgl_area_t.sizeof() + len(bitmap)]  # front color in case of BPP4
+        transformation = 0  # NO_TRANSFORMATION
+        color_map = data[
+            nbgl_area_t.sizeof() + len(bitmap)
+        ]  # front color in case of BPP4
         self.draw_image(area, bpp, transformation, buffer, color_map)
