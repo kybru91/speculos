@@ -1,7 +1,7 @@
 version: "3.7"
 
 services:
-  nanos:
+  speculos:
     build: .
     image: ghcr.io/ledgerhq/speculos
     volumes:
@@ -11,5 +11,5 @@ services:
       - "5000:5000" # api
       - "40000:40000" # apdu
       - "41000:41000" # vnc
-    command: "--model nanos ./apps/btc.elf --sdk 2.0 --seed secret --display headless --apdu-port 40000 --vnc-port 41000"
+    command: "./apps/boil.elf --seed secret --display headless --apdu-port 40000 --vnc-port 41000"
     # Add `--vnc-password "<password>"` for macos users to use built-in vnc client.
