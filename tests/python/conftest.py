@@ -3,39 +3,39 @@ import os
 import re
 from collections import namedtuple
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from speculos.client import SpeculosClient
 
 
 # going back from...(conftest.py \ python \ tests \ git root) / 'apps'
-APP_DIR = Path(__file__).resolve().parent.  parent. parent    / "apps"
-AppInfo = namedtuple("AppInfo", ["filepath", "model", "name", "api_level", "hash"])
+APP_DIR = Path(__file__).resolve().parent.parent.parent / "apps"
+AppInfo = namedtuple("AppInfo", ["filepath", "model", "name", "version"])
 
 
-def app_info_from_path(path: Path) -> AppInfo:
-    # name example: nanosp#boil#1.5#5b6693b8.elf
-    app_regexp = re.compile(r"^(nanox|nanosp)#([^#]+)#([^#][\d\w\-.]+)#([a-f0-9]*)\.elf$")
+def app_info_from_path(path: Path) -> Optional[AppInfo]:
+    # name example: nanox#boil#2.1.0.elf
+    app_regexp = re.compile(r"^(nanox|nanosp|stax|flex|apex_p)#([^#]+)#([\w\-.]+)\.elf$")
     matching = re.match(app_regexp, path.name)
     if not matching:
         return None
-    assert len(matching.groups()) == 4
-    return AppInfo(filepath=path, model=matching.group(1), name=matching.group(2), api_level=matching.group(3),
-                   hash=matching.group(4))
+    return AppInfo(
+        filepath=path, model=matching.group(1), name=matching.group(2), version=matching.group(3)
+    )
 
 
 def list_apps_to_test() -> List[AppInfo]:
     """
     List apps matching the pattern:
 
-        <device>#<app_name>#<api_level>#<commit_hash>.elf
+        <device>#<app_name>#<version>.elf
 
     in the apps/ directory and return a list of APDUClient
     objects for these applications.
 
     A typical application path looks like:
 
-    'apps/nanosp#boil#1.5#5b6693b8.elf'
+    'apps/nanox#boil#2.1.0.elf'
     """
     all_apps = []
     for appfile in APP_DIR.iterdir():
@@ -44,7 +44,7 @@ def list_apps_to_test() -> List[AppInfo]:
         info = app_info_from_path(appfile)
         if not info:
             pytest.fail(
-                f"An unexpected file was found in apps/, with a # but not matching the pattern: {filename!r}"
+                f"An unexpected file was found in apps/, with a # but not matching the pattern: {appfile.name!r}"
             )
             continue
         all_apps.append(info)
@@ -80,9 +80,7 @@ def idfn(app: Path) -> str:
 
 
 def client_instance(app, additional_args=None):
-    args = ["--model", app.model, "--apiLevel", app.api_level]
-    if additional_args is not None:
-        args += additional_args
+    args = list(additional_args) if additional_args is not None else []
     return SpeculosClient(str(app.filepath), args=args)
 
 
@@ -109,6 +107,5 @@ def client(request):
     """Run the API tests on the default boil.elf app."""
 
     info = app_info_from_path((APP_DIR / "boil.elf").resolve())
-    args = ["--model", info.model, "--apiLevel", info.api_level]
-    with SpeculosClient(app=str(info.filepath), args=args) as _client:
+    with SpeculosClient(app=str(info.filepath)) as _client:
         yield _client

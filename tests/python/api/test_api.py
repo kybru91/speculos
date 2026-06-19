@@ -97,9 +97,9 @@ class TestApi:
                         assert re.match(text, event["text"])
 
             texts = [
-                '{"events": [{"text": "Boilerplate", "x": 34, "y": 29, "w": 63, "h": 11, "clear": false}, '
-                '{"text": "app is ready", "x": 34, "y": 44, "w": 62, "h": 12, "clear": false}]}\n',
-                '{"events": [{"text": "App settings", "x": 29, "y": 36, "w": 72, "h": 12, "clear": false}]}\n'
+                '{"events": [{"text": "Boilerplate", "x": 32, "y": 26, "w": 64, "h": 14, "clear": false}, '
+                '{"text": "app is ready", "x": 32, "y": 42, "w": 63, "h": 14, "clear": false}]}\n',
+                '{"events": [{"text": "App settings", "x": 28, "y": 34, "w": 72, "h": 14, "clear": false}]}\n',
             ]
             for text in texts:
                 content = get_current_screen_content(r)
