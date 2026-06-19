@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Documentation: Quickstart guide with a cross-platform setup matrix (Linux/macOS/Windows, pip/Docker, Qt/Web/VNC)
+- Documentation: "Get an app to run" page (ready-made ELFs, building with ledger-app-builder Docker, VS Code extension)
+- Documentation: "Driving Speculos from code or an agent" page (REST API + APDU)
+- Documentation: Troubleshooting page (common errors and fixes)
+- `examples/quickstart/`: runnable headless launch script and a REST-API agent example
+
+### Changed
+
+- Documentation: refreshed outdated macOS, Docker, usage and clients pages (removed obsolete `--model nanos`, missing `btc.elf`, manual Dockerfile edits, archived `btchip-python` references, and the obsolete `ledgerblue` version pin)
+- `docker-compose.yml`: use the bundled `apps/boil.elf` and a valid default configuration
+
 ## [0.26.9] 2026-06-17
 
 ### Fixed
