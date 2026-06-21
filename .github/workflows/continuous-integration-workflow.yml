@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Clone
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
     - name: Build speculos-builder locally
@@ -40,7 +40,7 @@ jobs:
     - name: Export image as artifact
       run: docker save speculos-builder:local > /tmp/speculos-builder-image.tar
     - name: Upload image artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: speculos-builder-image
         path: /tmp/speculos-builder-image.tar
@@ -52,9 +52,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Clone
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
     - name: Download builder image artifact
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v7
       with:
         name: speculos-builder-image
         path: /tmp
@@ -78,11 +78,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Clone
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         fetch-depth: 0
     - name: Download builder image artifact
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v7
       with:
         name: speculos-builder-image
         path: /tmp
@@ -127,18 +127,18 @@ jobs:
 
     steps:
     - name: Clone
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         fetch-depth: 0
     - name: Download builder image artifact
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v7
       with:
         name: speculos-builder-image
         path: /tmp
     - name: Load builder image
       run: docker load -i /tmp/speculos-builder-image.tar
     - name: Setup Python version
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python_version }}
     - name: Build and test
