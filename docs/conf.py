@@ -13,7 +13,7 @@ author = "Ledger"
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ["myst_parser", "sphinxcontrib.rawfiles"]
+extensions = ["myst_parser"]
 
 templates_path = ["_templates"]
 # requirements.txt would otherwise be picked up as a Markdown document (see the
@@ -25,8 +25,6 @@ source_suffix = {
     ".txt": "markdown",
     ".md": "markdown",
 }
-
-rawfiles = ["CNAME"]
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
