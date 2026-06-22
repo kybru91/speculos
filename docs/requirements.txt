@@ -3,4 +3,3 @@ sphinx<7
 # rtd-theme v3 is still beta but should work with newer sphinx versions
 sphinx-rtd-theme<=2
 myst-parser
-sphinxcontrib-rawfiles
