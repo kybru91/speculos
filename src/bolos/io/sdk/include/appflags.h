@@ -100,12 +100,12 @@
 #define APPLICATION_FLAGS_SHIFT   (32)
 
 #define GET_COMPLEMENTED_APPLICATION_FLAGS(flags)                              \
-  (((~((flags)&APPLICATION_FLAGS_MASK) << APPLICATION_FLAGS_SHIFT)) |          \
-   ((flags)&APPLICATION_FLAGS_MASK))
+  (((~((flags) & APPLICATION_FLAGS_MASK) << APPLICATION_FLAGS_SHIFT)) |        \
+   ((flags) & APPLICATION_FLAGS_MASK))
 
 #define IS_APPLICATION_FLAGS_SECURE(complemented_flags)                        \
   (((~(complemented_flags) << APPLICATION_FLAGS_SHIFT) &                       \
     APPLICATION_FLAG_NEG_MASK) ==                                              \
-   ((complemented_flags)&APPLICATION_FLAG_NEG_MASK))
+   ((complemented_flags) & APPLICATION_FLAG_NEG_MASK))
 
 extern uint64_t app_flags;

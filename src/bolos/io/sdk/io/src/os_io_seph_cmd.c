@@ -108,7 +108,7 @@ int os_io_seph_cmd_setup_ticker(unsigned int interval_ms)
   buffer[1] = 0;
   buffer[2] = 2;
   buffer[3] = (interval_ms >> 8) & 0xff;
-  buffer[4] = (interval_ms)&0xff;
+  buffer[4] = (interval_ms) & 0xff;
   return os_io_tx_cmd(OS_IO_PACKET_TYPE_SEPH, buffer, 5, NULL);
 }
 

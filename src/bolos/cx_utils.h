@@ -51,15 +51,9 @@ unsigned long int cx_shr(unsigned long int x, unsigned char n) ;
 #ifndef NATIVE_64BITS // NO 64BITS
 
 #ifdef OS_LITTLE_ENDIAN
-#define _64BITS(h, l)                                                          \
-  {                                                                            \
-    l, h                                                                       \
-  }
+#define _64BITS(h, l) { l, h }
 #else
-#define _64BITS(h, l)                                                          \
-  {                                                                            \
-    h, l                                                                       \
-  }
+#define _64BITS(h, l) { h, l }
 #endif
 
 #define CLR64(x)                                                               \

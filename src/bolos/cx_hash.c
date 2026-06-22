@@ -61,7 +61,7 @@ static const cx_hash_info_t cx_sha3_info = {
   (int (*)(void *ctx, uint8_t *digest))spec_cx_sha3_final,
   (int (*)(void *ctx, size_t output_size))cx_sha3_init,
   (int (*)(const void *ctx))cx_sha3_validate_context,
-  (size_t(*)(const void *ctx))spec_cx_sha3_get_output_size
+  (size_t (*)(const void *ctx))spec_cx_sha3_get_output_size
 };
 
 static const cx_hash_info_t cx_keccak_info = {
@@ -73,7 +73,7 @@ static const cx_hash_info_t cx_keccak_info = {
   (int (*)(void *ctx, uint8_t *digest))spec_cx_sha3_final,
   (int (*)(void *ctx, size_t output_size))cx_keccak_init,
   (int (*)(const void *ctx))cx_sha3_validate_context,
-  (size_t(*)(const void *ctx))spec_cx_sha3_get_output_size
+  (size_t (*)(const void *ctx))spec_cx_sha3_get_output_size
 };
 
 static const cx_hash_info_t cx_shake128_info = {
@@ -85,7 +85,7 @@ static const cx_hash_info_t cx_shake128_info = {
   (int (*)(void *ctx, uint8_t *digest))spec_cx_sha3_final,
   (int (*)(void *ctx, size_t output_size))cx_shake128_init,
   (int (*)(const void *ctx))cx_shake_validate_context,
-  (size_t(*)(const void *ctx))spec_cx_sha3_get_output_size
+  (size_t (*)(const void *ctx))spec_cx_sha3_get_output_size
 };
 
 static const cx_hash_info_t cx_shake256_info = {
@@ -97,7 +97,7 @@ static const cx_hash_info_t cx_shake256_info = {
   (int (*)(void *ctx, uint8_t *digest))spec_cx_sha3_final,
   (int (*)(void *ctx, size_t output_size))cx_shake256_init,
   (int (*)(const void *ctx))cx_shake_validate_context,
-  (size_t(*)(const void *ctx))spec_cx_sha3_get_output_size
+  (size_t (*)(const void *ctx))spec_cx_sha3_get_output_size
 };
 
 static const cx_hash_info_t cx_ripemd160_info = {
@@ -121,7 +121,7 @@ static const cx_hash_info_t cx_blake2b_info = {
   (int (*)(void *ctx, uint8_t *digest))spec_cx_blake2b_final,
   (int (*)(void *ctx, size_t output_size))cx_blake2b_init,
   (int (*)(const void *ctx))cx_blake2b_validate_context,
-  (size_t(*)(const void *ctx))spec_cx_blake2b_get_output_size
+  (size_t (*)(const void *ctx))spec_cx_blake2b_get_output_size
 };
 
 #if 0
