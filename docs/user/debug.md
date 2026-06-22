@@ -7,9 +7,11 @@ sort: 4
 Debug an app thanks to GDB:
 
 ```shell
-./speculos.py -d apps/btc.elf &
-./tools/debug.sh apps/btc.elf
+./speculos.py -d apps/boil.elf &
+./tools/debug.sh apps/boil.elf
 ```
+
+(Replace `apps/boil.elf` with your own app.)
 
 Some useful tricks:
 

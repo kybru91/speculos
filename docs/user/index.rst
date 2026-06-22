@@ -4,11 +4,15 @@ User
 .. toctree::
    :maxdepth: 1
 
-   api
-   automation
-   clients
-   debug
-   docker
-   macm1
-   semihosting
+   quickstart
    usage
+   getting_an_app
+   docker
+   macos
+   clients
+   api
+   agent
+   automation
+   debug
+   semihosting
+   troubleshooting

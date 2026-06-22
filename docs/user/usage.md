@@ -4,40 +4,24 @@ sort: 1
 
 # Usage
 
-After having [installed the requirements and built](../installation/build.md) speculos:
+> New to Speculos? Start with the [Quickstart](quickstart.md), which covers
+> installation and running an app on every platform.
+
+After having [installed the requirements and built](../installation/build.md) speculos
+(or `pip install speculos`), run an app. With applications built by recent SDKs,
+Speculos **automatically detects** the targeted device:
 
 ```shell
-./speculos.py apps/btc.elf
+./speculos.py path/to/app.elf
 ```
+
+> A demo app, `apps/boil.elf`, is bundled in the source tree if you just want to
+> try Speculos without building or fetching an app:
+> `./speculos.py apps/boil.elf`.
 
 The docker image can also be used directly, as detailed in the specific [docker documentation page](docker.md).
 
-With applications built by recent SDKs, Speculos can automatically detect the targeted device. The Nano X, Nano S+, Flex, Stax and Apex+ can be specified on the command line:
-
-```shell
-./speculos.py --model nanox apps/nanox#btc#2.0.2#1c8db8da.elf
-./speculos.py --model nanosp apps/nanosp#btc#1.0.3#17bf7619.elf
-./speculos.py --model stax apps/btc.elf.elf
-./speculos.py --model flex apps/btc.elf.elf
-```
-
-The last SDK version is automatically selected. However, a specific version
-be specified if the target app is not build against the last version of the SDK,
-thanks to the `-k`/`--sdk` argument. For instance, to launch an app built
-against the SDK `1.5` on the Nano S:
-
-```shell
-./speculos.py --sdk 1.5 --model nanosp apps/btc.elf
-```
-
-Supported SDK values for each device are defined in [src/sdk.h](https://github.com/LedgerHQ/speculos/blob/master/src/sdk.h).
-You main choose the SDK using `-k`/`--sdk` argument:
-
-|     | Nano S+    | Nano X          |
-|-----|------------|-----------------|
-| SDK | 1.0, 1.0.3 | 1.2, 2.0, 2.0.2 |
-
-For more options, pass the `-h` or `--help` flag.
+For all options, pass the `-h` or `--help` flag.
 
 ## Keyboard control
 
@@ -73,7 +57,7 @@ values can be set through the `SPECULOS_APPNAME` environment variable. For
 instance:
 
 ```shell
-$ SPECULOS_APPNAME=blah:1.2.3.4 ./speculos.py ./apps/btc.elf &
+$ SPECULOS_APPNAME=blah:1.2.3.4 ./speculos.py ./apps/boil.elf &
 $ echo 'b0 01 00 00 00' \
   | LEDGER_PROXY_ADDRESS=127.0.0.1 LEDGER_PROXY_PORT=9999 ledgerctl send - \
   | xxd -r -ps \
@@ -83,14 +67,21 @@ $ echo 'b0 01 00 00 00' \
 00000012
 ```
 
-# Bitcoin Testnet app
+## Loading a library app (example: Bitcoin Testnet)
 
-Launch the Bitcoin Testnet app, which requires the Bitcoin app:
+Some apps call into another app at runtime (`os_lib_call`). Pass the dependency
+with `-l name:path` (the name is optional if present in the ELF metadata). For
+example, the Bitcoin Testnet app depends on the Bitcoin app:
 
 ```shell
 ./speculos.py ./apps/btc-test.elf -l Bitcoin:./apps/btc.elf
 ```
 
+> `btc-test.elf` and `btc.elf` are **not bundled** with Speculos; build them from
+> [`app-bitcoin-new`](https://github.com/LedgerHQ/app-bitcoin-new) (see
+> [Get an app to run](getting_an_app.md)). The `-l` mechanism itself works with
+> any app and its library dependency.
+
 ## OCR
 
-OCR is available for NanoX, Nanos S+, Flex, Stax and Apex+ with built in character recognition.
+OCR is available for Nano X, Nano S+, Flex, Stax and Apex+ with built-in character recognition.

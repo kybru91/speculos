@@ -5,8 +5,14 @@ sort: 3
 # Clients: how to send APDUs
 
 Clients can communicate with the emulated device using APDUs, as usual. Speculos
-embbeds a TCP server (listening on `127.0.0.1:9999`) to forward APDUs to the
+embeds a TCP server (listening on `127.0.0.1:9999`) to forward APDUs to the
 target app.
+
+> The examples below use the Bitcoin app (`btc.elf`), which is **no longer
+> bundled** with Speculos — build it from
+> [`app-bitcoin-new`](https://github.com/LedgerHQ/app-bitcoin-new) (see
+> [Get an app to run](getting_an_app.md)). The APDUs and responses shown are
+> Bitcoin-specific; with another app, the commands and replies will differ.
 
 ## ledgerctl (ledgerwallet)
 
@@ -34,8 +40,7 @@ $ echo 'e0c4000000' | LEDGER_PROXY_ADDRESS=127.0.0.1 LEDGER_PROXY_PORT=9999 ledg
 
 Most clients relies on the
 [blue-loader-python](https://github.com/LedgerHQ/blue-loader-python/) Python
-library which supports Speculos since release
-[0.1.24](https://pypi.org/project/ledgerblue/0.1.24/). This library can be
+library which supports Speculos. This library can be
 installed through pip using the following command-line:
 
 ```shell
@@ -51,17 +56,6 @@ $ echo 'e0c4000000' | LEDGER_PROXY_ADDRESS=127.0.0.1 LEDGER_PROXY_PORT=9999 pyth
 <= b'1b30010308010003'9000
 <= Clear bytearray(b'\x1b0\x01\x03\x08\x01\x00\x03')
 ```
-
-## btchip-python
-
-Use [btchip-python](https://github.com/LedgerHQ/btchip-python) without a real device:
-
-```shell
-PYTHONPATH=$(pwd) LEDGER_PROXY_ADDRESS=127.0.0.1 LEDGER_PROXY_PORT=9999 python tests/testMultisigArmory.py
-```
-
-Note: `btchip-python` relies on its own library to communicate with devices
-(physical or emulated) instead of `ledgerblue` to transmit APDUs.
 
 ## ledger-live-common
 

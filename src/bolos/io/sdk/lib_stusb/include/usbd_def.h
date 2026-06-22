@@ -285,11 +285,11 @@ static __inline uint16_t SWAPBYTE(uint8_t *addr)
 }
 
 #ifndef LOBYTE
-#define LOBYTE(x) ((uint8_t)((x)&0x00FFU))
+#define LOBYTE(x) ((uint8_t)((x) & 0x00FFU))
 #endif
 
 #ifndef HIBYTE
-#define HIBYTE(x) ((uint8_t)(((x)&0xFF00U) >> 8U))
+#define HIBYTE(x) ((uint8_t)(((x) & 0xFF00U) >> 8U))
 #endif
 
 #ifndef MIN

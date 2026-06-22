@@ -4,18 +4,21 @@
 
 ![screenshot btc nano s](https://raw.githubusercontent.com/LedgerHQ/speculos/master/docs/_static/screenshot-api-nanos-btc.png)
 
-The goal of this project is to emulate Ledger Nano S+, Nano X, Apex+, Flex and Stax apps on
-standard desktop computers, without any hardware device. More information can
-be found here in the
-[documentation website](https://ledgerhq.github.io/speculos) (or in the
-[docs/ folder](docs/) directly).
+The goal of this project is to emulate Ledger Apps on standard desktop computers,
+without any hardware device.
+More information can be found here in the
+[documentation website](https://ledgerhq.github.io/speculos)
+(or in the [docs/](docs/) folder directly).
 
 Usage example:
 
 ```shell
-./speculos.py apps/btc.elf --model nanosp
+./speculos.py apps/boil.elf
 # ... and open a browser on http://127.0.0.1:5000
 ```
+
+New to Speculos? The [Quickstart guide](https://ledgerhq.github.io/speculos/user/quickstart.html)
+walks you through installation and running an app on Linux, macOS and Windows.
 
 ## Installation
 
@@ -23,13 +26,12 @@ Usage example:
 
 The easiest, stable way to install Speculos is with `pip`:
 
-```
+```bash
 pip install speculos
 ```
 
 It is advised to use Python virtualenv, otherwise admin rights will probably be
 necessary.
-
 
 ### From sources
 
@@ -38,7 +40,7 @@ complex, due to all the dependency needed for compiling the emulator.
 
 On Debian (10 or later) or Ubuntu (18.04 or later):
 
-```
+```bash
 sudo apt install \
     git cmake gcc-arm-linux-gnueabihf libc6-dev-armhf-cross gdb-multiarch \
     python3-pyqt6 python3-construct python3-flask-restful python3-jsonschema \
@@ -64,7 +66,6 @@ being merged to `master`:
   a team with write access to the repository)
 - External contributors should fork the repository
 
-
 ## Limitations
 
 There is absolutely no guarantee that apps will have the same behavior on
@@ -84,7 +85,8 @@ not on Speculos. Note that such unaligned accesses are supported by other
 Ledger devices.
 
 Following code crashes on LNS device, but not on Speculos nor on other devices.
-```
+
+```c
 uint8_t buffer[20];
 for (int i = 0; i < 20; i++) {
     buffer[i] = i;
@@ -99,7 +101,6 @@ NanoX, Flex, Apex+ and Stax devices use an internal watchdog enforcing usage of 
 calls to `io_seproxyhal_io_heartbeat();`. This watchdog is not emulated on
 Speculos.
 
-
 ## Security
 
 Apps can make arbitrary Linux system calls (and use QEMU
@@ -112,7 +113,6 @@ between the app and the syscalls. This doesn't reflect the security of the
 firmware on hardware devices where app and OS isolation is enforced.
 
 Speculos is not part of Ledger bug bounty program.
-
 
 ## Are you developing a Nano App as an external developer?
 

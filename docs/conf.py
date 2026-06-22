@@ -6,28 +6,30 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'Speculos'
-copyright = '2024, Ledger'
-author = 'Ledger'
+project = "Speculos"
+copyright = "2024, Ledger"
+author = "Ledger"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ['myst_parser', 'sphinxcontrib.rawfiles']
+extensions = ["myst_parser", "sphinxcontrib.rawfiles"]
 
-templates_path = ['_templates']
-exclude_patterns = []
+templates_path = ["_templates"]
+# requirements.txt would otherwise be picked up as a Markdown document (see the
+# .txt -> markdown mapping below) and warned about as not being in any toctree.
+exclude_patterns = ["requirements.txt"]
 
 source_suffix = {
-    '.rst': 'restructuredtext',
-    '.txt': 'markdown',
-    '.md': 'markdown',
+    ".rst": "restructuredtext",
+    ".txt": "markdown",
+    ".md": "markdown",
 }
 
-rawfiles = ['CNAME']
+rawfiles = ["CNAME"]
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = "sphinx_rtd_theme"
-html_static_path = ['_static']
+html_static_path = ["_static"]

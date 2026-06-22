@@ -14,12 +14,20 @@ Speculos documentation
 Users
 -----
 
-Installation and basic usage
-++++++++++++++++++++++++++++
+Getting started
++++++++++++++++
+
+- **New here? Start with the** :doc:`Quickstart<user/quickstart>` (install + run on any OS)
+- :doc:`Get an app to run<user/getting_an_app>` (find or build an ``.elf``)
+- :doc:`Driving Speculos from code or an agent<user/agent>`
+- :doc:`Troubleshooting<user/troubleshooting>`
+
+Installation per platform
+++++++++++++++++++++++++++
 
 - Linux: :doc:`Requirements and build<installation/build>`
-- Mac OS (and Linux) users: :doc:`How to use the Docker image<user/docker>` with VNC
-- Mac M1 users: :doc:`How to build and use the Docker image<user/macm1>`
+- macOS (and Linux) users: :doc:`How to use the Docker image<user/docker>` with VNC
+- macOS Apple Silicon users: :doc:`Run the prebuilt Docker image<user/macos>`
 - Windows users: :doc:`Using speculos from WSL 2<installation/wsl>`
 - :doc:`Usage<user/usage>`
 
