@@ -93,7 +93,7 @@ else()
 
   ExternalProject_Add(
     blst
-    URL https://github.com/supranational/blst/archive/e7f90de551e8df682f3cc99067d204d8b90d27ad.tar.gz
+    URL https://github.com/supranational/blst/archive/e7f90de551e8df682f3cc99067d204d8b90d27ad.tar.gz # Release v0.3.16
     URL_HASH SHA256=d0dd93537bcfcb68375826597835908dfc6b9bf0b31ceadde249e038e630db74
     CONFIGURE_COMMAND ""
     BUILD_COMMAND sh build.sh CC=arm-linux-gnueabihf-gcc
