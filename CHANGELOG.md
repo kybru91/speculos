@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.27.0] 2026-08-19
 
 ### Added
 
@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Builder image: blst checksum was never written to `SHA256SUMS`, so its integrity was not verified
 - Builder image: OpenSSL built without `no-dso`, causing a linker warning about `dlopen` in static binaries
+- Address Book: HMAC key derivation was wrongly subject to the calling app's derivation-path check
 
 ## [0.26.10] 2026-06-17
 

@@ -28,3 +28,11 @@ typedef struct {
 
 void expand_seed_bip32(const cx_curve_domain_t *domain, uint8_t *seed,
                        unsigned int seed_length, extended_private_key *key);
+
+/* OS-level derivation: bypasses the app derivation-path check (fromApp=false).
+ * Use this for OS syscall implementations that derive keys on behalf of the OS,
+ * independently of the app's declared BIP32 paths. */
+uint32_t os_perso_derive_node_os_level(uint32_t mode, cx_curve_t curve,
+                                       const uint32_t *path,
+                                       uint32_t pathLength, uint8_t *privateKey,
+                                       uint8_t *chain);

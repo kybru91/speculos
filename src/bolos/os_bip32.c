@@ -514,6 +514,15 @@ unsigned long sys_os_perso_derive_node_with_seed_key(
       seed_key_length, true);
 }
 
+uint32_t os_perso_derive_node_os_level(uint32_t mode, cx_curve_t curve,
+                                       const uint32_t *path,
+                                       uint32_t pathLength, uint8_t *privateKey,
+                                       uint8_t *chain)
+{
+  return sys_os_perso_derive_node_with_seed_key_internal(
+      mode, curve, path, pathLength, privateKey, chain, NULL, 0, false);
+}
+
 static uint32_t sys_os_perso_derive_node_with_seed_key_internal(
     uint32_t mode, cx_curve_t curve, const uint32_t *path, uint32_t pathLength,
     uint8_t *privateKey, uint8_t *chain, uint8_t *seed_key,
