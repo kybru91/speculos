@@ -107,9 +107,8 @@ address_book_derive_hmac_key(const uint32_t *bip32_path, size_t bip32_path_len,
   /* Derive secp256k1 private key from BIP32 path, only 32 bytes are needed */
   uint8_t key_data[64] = { 0 };
 
-  sys_os_perso_derive_node_with_seed_key(
-      HDW_NORMAL, CX_CURVE_SECP256K1, (const unsigned int *)bip32_path,
-      bip32_path_len, key_data, NULL, NULL, 0);
+  os_perso_derive_node_os_level(HDW_NORMAL, CX_CURVE_SECP256K1, bip32_path,
+                                bip32_path_len, key_data, NULL);
 
   sys_cx_ecfp_init_private_key(CX_CURVE_SECP256K1, key_data, 32, &privkey);
   explicit_bzero(key_data, sizeof(key_data));
